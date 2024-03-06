@@ -25,7 +25,8 @@ public class Player2 : MonoBehaviour
     private CharacterController _characterController;
     public Transform cam;
 
-
+    public float turnSmoothTime = 0.1f;
+    float turnSmoothVelocity;
 
     // Start is called before the first frame update
     void Start()
@@ -39,12 +40,26 @@ public class Player2 : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
         Vector3 direction = new Vector3(horizontalInput, 0, verticalInput);
+        Vector3 moveDir = new Vector3(horizontalInput, 0, verticalInput);
 
         JumpMecanics();
         
         _directionY -= _gravity * Time.deltaTime;
-        direction.y = _directionY;
-        _characterController.Move(direction * _moveSpeed * Time.deltaTime);
+        moveDir.y = _directionY;
+
+
+        if (direction.magnitude >= 0.1f)
+        {
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+
+            moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            moveDir.y = _directionY;
+        }
+
+
+        _characterController.Move(moveDir * _moveSpeed * Time.deltaTime);
 
 
         }
