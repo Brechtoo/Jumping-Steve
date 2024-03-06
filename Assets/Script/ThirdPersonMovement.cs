@@ -5,12 +5,14 @@ using UnityEngine;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
-    
+
     public CharacterController controller;
     public Transform cam;
 
 
     public float speed = 6f;
+    public float gravity = 9.81f;
+    public float jumpSpeed = 3.5f;
 
 
     public float turnSmoothTime = 0.1f;
@@ -23,8 +25,15 @@ public class ThirdPersonMovement : MonoBehaviour
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
 
+        if (Input.GetButtonDown("Jump"))
+        {
+            direction.y = jumpSpeed;
+        }
 
-        if(direction.magnitude >= 0.1f)
+        direction.y -= gravity;
+
+
+        if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
@@ -34,5 +43,11 @@ public class ThirdPersonMovement : MonoBehaviour
             controller.Move(moveDir.normalized * speed * Time.deltaTime);
         }
 
+       
+
+
+
     }
 }
+
+  
