@@ -25,13 +25,25 @@ public class Player2 : MonoBehaviour
 
     private bool isDashing = false; // Variable, um den aktuellen Zustand des Dashs zu verfolgen
 
+    [SerializeField]
+    private Vector3 moveDir = new Vector3 (0,0,0);
+
 
     [SerializeField]
     private float doubleJumpMultiplyer = 0.5f;
 
+    [SerializeField]
     private float _directionY;
 
     private bool canDoubleJump = false;
+
+    private bool wallrunning = false;
+
+    [SerializeField]
+    private float wallrunSpeed = 400f;
+
+    float wallGravity = 0f;
+    float walli = 0.3f;
 
 
     private CharacterController _characterController;
@@ -52,15 +64,19 @@ public class Player2 : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
         Vector3 direction = new Vector3(horizontalInput, 0, verticalInput);
-        Vector3 moveDir = new Vector3(horizontalInput, 0, verticalInput);
+        moveDir = new Vector3(horizontalInput, 0, verticalInput);
 
         JumpMecanics();
+        
 
-
-        _directionY -= _gravity * Time.deltaTime;
+        if(_directionY > -3f)
+        {
+            _directionY -= _gravity * Time.deltaTime;
+        }
+  
         moveDir.y = _directionY;
 
-
+        //kamera winkel berechnung
         if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
@@ -71,6 +87,7 @@ public class Player2 : MonoBehaviour
             moveDir.y = _directionY;
         }
 
+        //Dash Bedingung
         if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
         {
 
@@ -78,11 +95,20 @@ public class Player2 : MonoBehaviour
             StartCoroutine(PerformDash(moveDir));
         }
 
-
+        if (!wallrunning)
+        {
         _characterController.Move(moveDir * _moveSpeed * Time.deltaTime);
-
+        }
+        else
+        {
+            StartCoroutine(PerformWallrun(moveDir));
+        }
+        
 
         }
+
+
+
 
 
 
@@ -121,6 +147,40 @@ public class Player2 : MonoBehaviour
 
         isDashing = false; // Setzen des Zustands auf "Nicht im Dash" nach Abschluss des Dashs
     }
+
+    private ControllerColliderHit _wallCollision; // Variable, um die Kollision mit der Wand zu speichern
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        
+        // Überprüfen, ob der kollidierte Collider den Layer "Wallrun" hat
+        if (hit.collider.CompareTag("Wallrun"))
+        {
+            _wallCollision = hit;
+            wallrunning = true;
+            isDashing = true;
+            // Rufen Sie hier die PerformWallrun-Methode auf
+        }
+    }
+
+
+    IEnumerator PerformWallrun(Vector3 vec)
+    {
+        
+            canDoubleJump = true;
+            _characterController.Move(vec *  _moveSpeed * Time.deltaTime);
+
+        
+        yield return null;
+
+        wallrunning = false;
+        isDashing = false;
+    }
+
+
+
+
+
 
     public void JumpMecanics()
     {
