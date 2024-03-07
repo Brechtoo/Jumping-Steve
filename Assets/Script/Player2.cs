@@ -15,6 +15,18 @@ public class Player2 : MonoBehaviour
     private float _jumpSpeed = 3.5f;
 
     [SerializeField]
+    private float dashDistance = 5f; // Die Entfernung, die der Spieler im Dash zurücklegt
+
+    [SerializeField]
+    private float dashDuration = 0.2f; // Die Dauer des Dashs in Sekunden
+
+    [SerializeField]
+    private float acceleration = 1.5f;
+
+    private bool isDashing = false; // Variable, um den aktuellen Zustand des Dashs zu verfolgen
+
+
+    [SerializeField]
     private float doubleJumpMultiplyer = 0.5f;
 
     private float _directionY;
@@ -43,7 +55,8 @@ public class Player2 : MonoBehaviour
         Vector3 moveDir = new Vector3(horizontalInput, 0, verticalInput);
 
         JumpMecanics();
-        
+
+
         _directionY -= _gravity * Time.deltaTime;
         moveDir.y = _directionY;
 
@@ -58,6 +71,13 @@ public class Player2 : MonoBehaviour
             moveDir.y = _directionY;
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
+        {
+
+            // Starten des Dashs
+            StartCoroutine(PerformDash(moveDir));
+        }
+
 
         _characterController.Move(moveDir * _moveSpeed * Time.deltaTime);
 
@@ -66,7 +86,41 @@ public class Player2 : MonoBehaviour
 
 
 
+    IEnumerator PerformDash(Vector3 dir)
+    {
 
+        dir.y = 0f; //Dash geht nicht in die Höhe
+
+        isDashing = true; // Setzen des Zustands auf "Im Dash"
+
+        float startTime = Time.time; // Zeitpunkt, zu dem der Dash begann
+
+        
+
+        while (Time.time - startTime < dashDuration) // Dash-Dauer überprüfen
+        {
+            // Berechnen des Fortschritts des Dashs (0 bis 1)
+            float progress = (Time.time - startTime) / dashDuration;
+
+            // Beschleunigen des Dashs zu Beginn
+            float currentSpeed = Mathf.Lerp(0, dashDistance / dashDuration, progress * acceleration);
+
+            // Verlangsamen des Dashs zum Ende hin
+            if (progress > 0.2f) 
+            {
+                // Exponentielle Verzögerung
+                float deceleration = Mathf.Pow(1 - (progress - 0.2f) * 2, 2);
+                currentSpeed *= deceleration;
+            }
+
+            // Bewegen des Charakter-Controllers in Richtung des Dashs
+            _characterController.Move(dir * currentSpeed * Time.deltaTime);
+
+            yield return null; // Warten auf den nächsten Frame
+        }
+
+        isDashing = false; // Setzen des Zustands auf "Nicht im Dash" nach Abschluss des Dashs
+    }
 
     public void JumpMecanics()
     {
