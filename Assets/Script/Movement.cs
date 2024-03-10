@@ -11,29 +11,26 @@ public class Player2 : MonoBehaviour
     public float _jumpSpeed = 1.5f;
 
     [Header("Dash")]
-    public float dashDistance = 45f; 
-    public float dashDuration = 0.8f; 
+    public float dashDistance = 45f;
+    public float dashDuration = 0.8f;
     public float acceleration = 200f;
-    public bool isDashing = false; 
+    private bool isDashing = false;
 
 
     [Header("Direction")]
-    public Vector3 direction;
-    public Vector3 moveDir = new Vector3(0,0,0);
-    public float _directionY;
-   
+    private Vector3 direction;
+    private Vector3 moveDir = new(0, 0, 0);
+    private float _directionY;
 
-    [Header("DoubleJump")] 
+
+    [Header("DoubleJump")]
     public float doubleJumpMultiplyer = 0.9f;
-    public bool canDoubleJump = false;
+    private bool canDoubleJump = false;
+  
 
-    
+
     [Header("Wallrunning")]
-    public bool wallRunning;
-    public float wallRunTimer;
-    public bool canWallRun = true;
-    public float wallRunTime;
-    
+
 
     [Header("Input")]
     private float horizontalInput;
@@ -43,7 +40,8 @@ public class Player2 : MonoBehaviour
     [Header("References")]
     public Transform orientation;
     private CharacterController characterController;
-    
+
+
 
     [Header("Cam")]
     public float turnSmoothTime = 0.06f;
@@ -55,6 +53,7 @@ public class Player2 : MonoBehaviour
     [SerializeField] private AudioSource dyingSound;
     [SerializeField] private AudioSource dashSound;
     [SerializeField] private AudioSource musicSound;
+
     [Header("Screens")]
     public GameOverScreen gameOverScreen;
     private bool dead = false;
@@ -65,6 +64,7 @@ public class Player2 : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         characterController = GetComponent<CharacterController>();
+
     }
 
     // Update is called once per frame
@@ -72,65 +72,35 @@ public class Player2 : MonoBehaviour
     {
         Dying();
         HandleInput();
-         
         HandleJump();
-        
+
         moveDir.y = _directionY;
 
-        if (_directionY > -2f && !wallRunning)
+        if (_directionY > -2f)
         {
             _directionY -= _gravity * Time.deltaTime;
         }
-        handleCamera();
-        handleDash();
+        HandleCamera();
+        HandleDash();
+        characterController.Move(_moveSpeed * Time.deltaTime * moveDir);
 
-        if (!wallRunning)
-        {
-            characterController.Move(moveDir * _moveSpeed * Time.deltaTime);
-        }
-
-        if (!canWallRun)
-        {
-            float start = Time.time;
-            while(Time.time - start < wallRunTimer)
-            {
-               
-            }
-            canWallRun = true;
-        }
-        }
+    }
 
     public void HandleInput()
     {
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
+
         direction = new Vector3(horizontalInput, 0, verticalInput);
         moveDir = new Vector3(horizontalInput, 0, verticalInput);
-        
+
     }
 
-   
 
-    IEnumerator PerformWallrun(Vector3 vec)
-    {
-        float startTime = Time.time;
-        while (Time.time - startTime < wallRunTime) 
-        { 
-            
-            canDoubleJump = true;
-            wallRunning = true;
-            isDashing = true;
-            vec.y = 0f;
-            characterController.Move(vec * _moveSpeed  * Time.deltaTime);
-            yield return null;
-        }
 
-        wallRunning = false;
-        isDashing = false;
-        canWallRun = false;
-    }
 
-    public void handleCamera()
+
+    public void HandleCamera()
     {
         if (direction.magnitude >= 0.1f)
         {
@@ -143,7 +113,7 @@ public class Player2 : MonoBehaviour
         }
     }
 
-    public void handleDash()
+    public void HandleDash()
     {
         //Dash Bedingung
         if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
@@ -155,23 +125,25 @@ public class Player2 : MonoBehaviour
     }
 
 
-    
 
-  
+
+
 
     IEnumerator PerformDash(Vector3 dir)
     {
-        if (!jumpSound.isPlaying)
+        if (jumpSound.isPlaying)
         {
-          dashSound.Play();
+            jumpSound.Pause();
         }
+        dashSound.Play();
+
         dir.y = 0f; //Dash geht nicht in die Höhe
 
         isDashing = true; // Setzen des Zustands auf "Im Dash"
 
         float startTime = Time.time; // Zeitpunkt, zu dem der Dash begann
 
-        
+
 
         while (Time.time - startTime < dashDuration) // Dash-Dauer überprüfen
         {
@@ -182,7 +154,7 @@ public class Player2 : MonoBehaviour
             float currentSpeed = Mathf.Lerp(0, dashDistance / dashDuration, progress * acceleration);
 
             // Verlangsamen des Dashs zum Ende hin
-            if (progress > 0.2f) 
+            if (progress > 0.2f)
             {
                 // Exponentielle Verzögerung
                 float deceleration = Mathf.Pow(1 - (progress - 0.2f) * 2, 2);
@@ -190,17 +162,18 @@ public class Player2 : MonoBehaviour
             }
 
             // Bewegen des Charakter-Controllers in Richtung des Dashs
-            characterController.Move(dir * currentSpeed * Time.deltaTime);
+            characterController.Move(currentSpeed * Time.deltaTime * dir);
 
             yield return null; // Warten auf den nächsten Frame
         }
 
         isDashing = false; // Setzen des Zustands auf "Nicht im Dash" nach Abschluss des Dashs
+
     }
 
     public void Dying()
     {
-        if(transform.position.y < -13f && !dead)
+        if (transform.position.y < -13f && !dead)
         {
             dead = true;
             GameOverScreen();
@@ -216,26 +189,39 @@ public class Player2 : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
-    
-    
-  
+
+
+
+
+
     public void HandleJump()
     {
+       
         if (characterController.isGrounded)
         {
+           
             canDoubleJump = true;
 
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump") && !isDashing)
             {
-                jumpSound.Play();
+                
+                if (!dashSound.isPlaying)
+                {
+                    jumpSound.Play();
+
+                }
                 _directionY = _jumpSpeed;
             }
         }
         else
         {
-            if (Input.GetButtonDown("Jump") && canDoubleJump)
+            if (Input.GetButtonDown("Jump") && canDoubleJump && !isDashing)
             {
-                jumpSound.Play();
+                if (!dashSound.isPlaying)
+                {
+                    jumpSound.Play();
+                }
+               
                 _directionY = _jumpSpeed * doubleJumpMultiplyer;
                 canDoubleJump = false;
             }
@@ -244,6 +230,6 @@ public class Player2 : MonoBehaviour
     }
 
 
-    
-    }
+
+}
 
