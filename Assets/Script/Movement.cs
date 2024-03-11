@@ -1,6 +1,6 @@
 ﻿using System.Collections;
-
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Cursor = UnityEngine.Cursor;
 
 public class Player2 : MonoBehaviour
@@ -56,6 +56,7 @@ public class Player2 : MonoBehaviour
 
     [Header("Screens")]
     public GameOverScreen gameOverScreen;
+    public PauseScreen pauseScreen;
     private bool dead = false;
 
     // Start is called before the first frame update
@@ -84,6 +85,7 @@ public class Player2 : MonoBehaviour
         HandleDash();
         characterController.Move(_moveSpeed * Time.deltaTime * moveDir);
 
+        Paused();
     }
 
     public void HandleInput()
@@ -229,7 +231,10 @@ public class Player2 : MonoBehaviour
         }
     }
 
-
-
+    public void Paused()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            pauseScreen.PauseGame();
+    }
+    
 }
-
