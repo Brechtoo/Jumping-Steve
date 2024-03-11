@@ -9,6 +9,8 @@ public class GameOverScreen : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    
+
     public void RestartButton()
     {
         Scene currentScene = SceneManager.GetActiveScene();

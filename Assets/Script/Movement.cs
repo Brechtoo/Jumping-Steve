@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using Cursor = UnityEngine.Cursor;
 
@@ -58,6 +60,8 @@ public class Player2 : MonoBehaviour
     public GameOverScreen gameOverScreen;
     public PauseScreen pauseScreen;
     private bool dead = false;
+    public Tut tut;
+    public DashTut dashTut;
 
     // Start is called before the first frame update
     void Start()
@@ -74,6 +78,7 @@ public class Player2 : MonoBehaviour
         Dying();
         HandleInput();
         HandleJump();
+     
 
         moveDir.y = _directionY;
 
@@ -96,6 +101,33 @@ public class Player2 : MonoBehaviour
         direction = new Vector3(horizontalInput, 0, verticalInput);
         moveDir = new Vector3(horizontalInput, 0, verticalInput);
 
+    }
+
+
+
+    
+
+    private void OnTriggerEnter(Collider trigger)
+    {
+        if(trigger.CompareTag("TutTrigger"))
+        {
+          tut.Setup();
+        }
+
+        if (trigger.CompareTag("CloseTutTrigger"))
+        {
+            tut.Close();
+        }
+
+        if (trigger.CompareTag("dashTut"))
+        {
+            dashTut.Setup();
+        }
+
+        if (trigger.CompareTag("CloseDashTut"))
+        {
+            dashTut.Close();
+        }
     }
 
 
