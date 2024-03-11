@@ -8,6 +8,8 @@ public class GameOverScreen : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    
+
     public void RestartButton()
     {
         SceneManager.LoadScene("Level 2");
