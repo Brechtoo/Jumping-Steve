@@ -9,11 +9,13 @@ public class Tut : MonoBehaviour
     public void Setup()
     {
         gameObject.SetActive(true);
+        
     }
 
     public void Close()
     {
         gameObject.SetActive (false);
+        Destroy(gameObject);
     }
 
 }

@@ -41,6 +41,10 @@ public class Player2 : MonoBehaviour
     [Header("References")]
     public Transform orientation;
     private CharacterController characterController;
+    public Animator animator;
+    public Transform animationPos;
+    public  ParticleSystem particleDash;
+    public  ParticleSystem particleSystemDoubleJump;
 
 
 
@@ -67,6 +71,7 @@ public class Player2 : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         characterController = GetComponent<CharacterController>();
+        
 
     }
 
@@ -76,6 +81,7 @@ public class Player2 : MonoBehaviour
         Dying();
         HandleInput();
         HandleJump();
+       
      
 
         moveDir.y = _directionY;
@@ -95,10 +101,20 @@ public class Player2 : MonoBehaviour
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
 
+        if(horizontalInput != 0  || verticalInput != 0 && !animator.GetBool("isJumping"))
+        {
+            animator.SetBool("isRunning", true);
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
+        }
+
         direction = new Vector3(horizontalInput, 0, verticalInput);
         moveDir = new Vector3(horizontalInput, 0, verticalInput);
 
     }
+
 
 
 
@@ -108,26 +124,36 @@ public class Player2 : MonoBehaviour
     {
         if(trigger.CompareTag("TutTrigger"))
         {
-          tut.Setup();
+            if(tut != null)
+               tut.Setup();
         }
 
         if (trigger.CompareTag("CloseTutTrigger"))
         {
-            tut.Close();
+            if (tut != null)
+                tut.Close();
         }
 
         if (trigger.CompareTag("dashTut"))
         {
+            if(dashTut != null)
             dashTut.Setup();
         }
 
         if (trigger.CompareTag("CloseDashTut"))
         {
-            dashTut.Close();
+            if (dashTut != null)
+                dashTut.Close();
         }
     }
 
+    public void FixedUpdate()
+    {
+        AnimationFix();
+    }
 
+    
+    
 
 
 
@@ -150,11 +176,37 @@ public class Player2 : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
         {
 
-            // Starten des Dashs
+            if (animator.GetBool("isDoubleJumping"))
+            {
+                ParticleDash(particleSystemDoubleJump);
+            }
+            else
+            {
+                ParticleDash(particleDash);
+            }
             StartCoroutine(PerformDash(moveDir));
+
+           
         }
     }
+    public void ParticleDash(ParticleSystem p)
+    {
+        if (p != null)
+        {
+            p.gameObject.SetActive(true);
+            p.Play();
+        }
+        
+    }
+  
 
+        public void AnimationFix()
+        {
+            if (characterController.isGrounded && !animator.GetBool("isDoubleJumping"))
+            {
+            animationPos.localRotation = Quaternion.identity;
+        }
+        }
 
 
 
@@ -166,7 +218,10 @@ public class Player2 : MonoBehaviour
         {
             jumpSound.Pause();
         }
-        dashSound.Play();
+        if(dir.x !=0 && dir.z != 0)
+        {
+            dashSound.Play();
+        }
 
         dir.y = 0f; //Dash geht nicht in die Höhe
 
@@ -174,7 +229,7 @@ public class Player2 : MonoBehaviour
 
         float startTime = Time.time; // Zeitpunkt, zu dem der Dash begann
 
-
+        animator.SetBool("isDashing", true);
 
         while (Time.time - startTime < dashDuration) // Dash-Dauer überprüfen
         {
@@ -192,13 +247,17 @@ public class Player2 : MonoBehaviour
                 currentSpeed *= deceleration;
             }
 
-            // Bewegen des Charakter-Controllers in Richtung des Dashs
+            
             characterController.Move(currentSpeed * Time.deltaTime * dir);
 
             yield return null; // Warten auf den nächsten Frame
         }
 
         isDashing = false; // Setzen des Zustands auf "Nicht im Dash" nach Abschluss des Dashs
+        animator.SetBool("isDashing",false);
+        particleDash.gameObject.SetActive(false);
+        particleSystemDoubleJump.gameObject.SetActive(false);
+
 
     }
 
@@ -220,7 +279,7 @@ public class Player2 : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
-
+ 
 
 
 
@@ -233,31 +292,38 @@ public class Player2 : MonoBehaviour
            
             canDoubleJump = true;
 
+            animator.SetBool("isJumping", false);
+            
+            animator.SetBool("isDoubleJumping", false);
+            
+
+
             if (Input.GetButtonDown("Jump") && !isDashing)
             {
-                
-                if (!dashSound.isPlaying)
-                {
-                    jumpSound.Play();
-
-                }
+                animator.SetBool("isRunning", false);
+                animator.SetBool("isJumping", true);
+                jumpSound.Play();
                 _directionY = _jumpSpeed;
             }
+
         }
         else
         {
             if (Input.GetButtonDown("Jump") && canDoubleJump && !isDashing)
             {
-                if (!dashSound.isPlaying)
-                {
-                    jumpSound.Play();
-                }
-               
+                animator.SetBool("isDoubleJumping", true);
+                jumpSound.Play();
                 _directionY = _jumpSpeed * doubleJumpMultiplyer;
                 canDoubleJump = false;
+                
+
             }
 
+            
+
         }
+
+      
     }
 
 

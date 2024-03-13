@@ -12,5 +12,6 @@ public class DashTut : MonoBehaviour
     public void Close()
     {
         gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }
