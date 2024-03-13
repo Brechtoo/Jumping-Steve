@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 using Cursor = UnityEngine.Cursor;
 
 public class Player2 : MonoBehaviour
@@ -58,12 +59,16 @@ public class Player2 : MonoBehaviour
     [SerializeField] private AudioSource dyingSound;
     [SerializeField] private AudioSource dashSound;
     [SerializeField] private AudioSource musicSound;
+    [SerializeField] private AudioSource finishSound;
 
     [Header("Screens")]
     public GameOverScreen gameOverScreen;
+    public PauseScreen pauseScreen;
     private bool dead = false;
     public Tut tut;
     public DashTut dashTut;
+
+    public LevelCompleted levelCompleted;
 
     // Start is called before the first frame update
     void Start()
@@ -94,6 +99,7 @@ public class Player2 : MonoBehaviour
         HandleDash();
         characterController.Move(_moveSpeed * Time.deltaTime * moveDir);
 
+        Paused();
     }
 
     public void HandleInput()
@@ -144,6 +150,12 @@ public class Player2 : MonoBehaviour
         {
             if (dashTut != null)
                 dashTut.Close();
+        }
+
+        if (trigger.CompareTag("GoalTrigger"))
+        {
+            finishSound.Play();
+            levelCompleted.Setup();
         }
     }
 
@@ -326,7 +338,10 @@ public class Player2 : MonoBehaviour
       
     }
 
-
-
+    public void Paused()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            pauseScreen.PauseGame();
+    }
+    
 }
-
