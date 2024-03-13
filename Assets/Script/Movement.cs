@@ -55,6 +55,7 @@ public class Player2 : MonoBehaviour
     [SerializeField] private AudioSource dyingSound;
     [SerializeField] private AudioSource dashSound;
     [SerializeField] private AudioSource musicSound;
+    [SerializeField] private AudioSource finishSound;
 
     [Header("Screens")]
     public GameOverScreen gameOverScreen;
@@ -62,6 +63,8 @@ public class Player2 : MonoBehaviour
     private bool dead = false;
     public Tut tut;
     public DashTut dashTut;
+
+    public LevelCompleted levelCompleted;
 
     // Start is called before the first frame update
     void Start()
@@ -127,6 +130,12 @@ public class Player2 : MonoBehaviour
         if (trigger.CompareTag("CloseDashTut"))
         {
             dashTut.Close();
+        }
+
+        if (trigger.CompareTag("GoalTrigger"))
+        {
+            finishSound.Play();
+            levelCompleted.Setup();
         }
     }
 
