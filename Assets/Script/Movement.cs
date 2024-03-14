@@ -60,6 +60,7 @@ public class Player2 : MonoBehaviour
     [SerializeField] private AudioSource dashSound;
     [SerializeField] private AudioSource musicSound;
     [SerializeField] private AudioSource finishSound;
+    [SerializeField] private AudioSource trampolinSound;
 
     [Header("Screens")]
     public GameOverScreen gameOverScreen;
@@ -122,7 +123,14 @@ public class Player2 : MonoBehaviour
     }
 
 
-
+    private void OnCollisionEnter(Collision collision)
+    {
+        // Überprüft, ob das kollidierende Objekt den richtigen Tag hat
+        if (collision.gameObject.CompareTag("GameOverTag"))
+        {
+            GameOverScreen();
+        }
+    }
 
     
 
@@ -156,6 +164,14 @@ public class Player2 : MonoBehaviour
         {
             finishSound.Play();
             levelCompleted.Setup();
+        }
+        if (trigger.CompareTag("TrampolinTrigger"))
+        {
+            _directionY = 1.5f * _jumpSpeed;
+            if(!trampolinSound.isPlaying)
+            {
+                trampolinSound.Play();
+            }
         }
     }
 
