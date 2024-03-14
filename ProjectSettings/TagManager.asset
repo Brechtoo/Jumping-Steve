@@ -13,6 +13,10 @@ TagManager:
   - FxTemporaire
   - GameOverTag
   - TrampolinTrigger
+  - Tor
+  - Tor 2
+  - "TrampolinSchr\xE4g"
+  - Tor 3
   layers:
   - Default
   - TransparentFX
@@ -22,8 +26,8 @@ TagManager:
   - UI
   - Ground
   - Wallrun
-  - 
-  - 
+  - Enemy
+  - Vegetation
   - 
   - 
   - 

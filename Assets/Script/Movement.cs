@@ -73,6 +73,11 @@ public class Player2 : MonoBehaviour
     public DashTut dashTut;
 
     public LevelCompleted levelCompleted;
+    public RollingBall rollingBall;
+    public RollingBall rollingBall2;
+    public RollingBall rollingBall3;
+    public RollingBall rollingBall4;
+    public RollingBall rollingBall5;
 
     // Start is called before the first frame update
     void Start()
@@ -199,6 +204,20 @@ public class Player2 : MonoBehaviour
             {
                 trampolinSound.Play();
             }
+        }
+        if (trigger.CompareTag("Tor")) // Überprüfen, ob das kollidierende Objekt der Gegner ist
+        {
+            rollingBall.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
+            rollingBall2.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
+            rollingBall3.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
+        }
+        if (trigger.CompareTag("Tor 2")) // Überprüfen, ob das kollidierende Objekt der Gegner ist
+        {
+            rollingBall4.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
+        }
+        if (trigger.CompareTag("Tor 3")) // Überprüfen, ob das kollidierende Objekt der Gegner ist
+        {
+            rollingBall5.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
         }
     }
 

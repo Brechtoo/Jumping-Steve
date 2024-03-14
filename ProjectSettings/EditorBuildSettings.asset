@@ -12,10 +12,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Credits.unity
     guid: 48a9b649d423ee140922b4163bc67912
   - enabled: 1
-    path: Assets/Scenes/Level 2.unity
+    path: Assets/Scenes/Level 1 (Tutorial).unity
     guid: 9d05ca18cfcf9be41a4c75e91a07eb6d
   - enabled: 1
-    path: Assets/Scenes/Level 3.unity
+    path: Assets/Scenes/Level 2.unity
     guid: 35cb35fea9516413395d400fbd6bda41
   - enabled: 0
     path: Assets/Scenes/Pause Screen.unity

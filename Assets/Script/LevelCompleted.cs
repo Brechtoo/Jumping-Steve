@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class LevelCompleted : MonoBehaviour
 {
     public bool active = false;
+
     public void Setup()
     {
         gameObject.SetActive(true);
@@ -14,6 +15,7 @@ public class LevelCompleted : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
+
 
     public void NextLevelButton()
     {
@@ -35,5 +37,4 @@ public class LevelCompleted : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadSceneAsync(0);
     }
-
 }
