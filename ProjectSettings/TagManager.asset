@@ -17,6 +17,9 @@ TagManager:
   - Tor 2
   - "TrampolinSchr\xE4g"
   - Tor 3
+  - MovingWallLeft
+  - MovingWallRight
+  - MovingWallUp
   layers:
   - Default
   - TransparentFX

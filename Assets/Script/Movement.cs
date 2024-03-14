@@ -128,8 +128,8 @@ public class Player2 : MonoBehaviour
 
     public void HandleInput()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
 
         if((horizontalInput != 0  || verticalInput != 0) && !animator.GetBool("isJumping"))
         {
@@ -223,9 +223,6 @@ public class Player2 : MonoBehaviour
 
     public void FixedUpdate()
     {
-       
-            
-      
         AnimationFix();
     }
 
@@ -252,9 +249,6 @@ public class Player2 : MonoBehaviour
         //Dash Bedingung
         if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
         {
-
-
-            
             StartCoroutine(PerformDash(moveDir));
 
            
@@ -269,9 +263,20 @@ public class Player2 : MonoBehaviour
         }
         
     }
-  
 
-        public void AnimationFix()
+    public void ParticleDashStop(ParticleSystem p)
+    {
+        if (p != null)
+        {
+            p.Stop();
+            p.gameObject.SetActive(false);
+            
+        }
+
+    }
+
+
+    public void AnimationFix()
         {
             if (characterController.isGrounded && !animator.GetBool("isDoubleJumping"))
             {
@@ -325,6 +330,7 @@ public class Player2 : MonoBehaviour
                 // Exponentielle Verzögerung
                 float deceleration = Mathf.Pow(1 - (progress - 0.2f) * 2, 2);
                 currentSpeed *= deceleration;
+                
             }
 
             
@@ -333,10 +339,14 @@ public class Player2 : MonoBehaviour
             yield return null; // Warten auf den nächsten Frame
         }
 
-        isDashing = false; // Setzen des Zustands auf "Nicht im Dash" nach Abschluss des Dashs
+        isDashing = false; 
+        
         animator.SetBool("isDashing",false);
-        particleDash.gameObject.SetActive(false);
-        particleSystemDoubleJump.gameObject.SetActive(false);
+
+
+        ParticleDashStop(particleSystemDoubleJump);
+        ParticleDashStop(particleDash);
+        
 
 
     }
@@ -378,7 +388,7 @@ public class Player2 : MonoBehaviour
             
 
 
-            if (Input.GetButtonDown("Jump") && !isDashing)
+            if (Input.GetButtonDown("Jump"))
             {
                 animator.SetBool("isRunning", false);
                 animator.SetBool("isJumping", true);
@@ -389,8 +399,9 @@ public class Player2 : MonoBehaviour
         }
         else
         {
-            if (Input.GetButtonDown("Jump") && canDoubleJump && !isDashing)
+            if (Input.GetButtonDown("Jump") && canDoubleJump)
             {
+                animator.SetBool("isJumping", true);
                 animator.SetBool("isDoubleJumping", true);
                 jumpSound.Play();
                 _directionY = _jumpSpeed * doubleJumpMultiplyer;

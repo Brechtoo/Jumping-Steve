@@ -37,4 +37,9 @@ public class LevelCompleted : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadSceneAsync(0);
     }
+
+    public void Credits()
+    {
+        SceneManager.LoadSceneAsync(1);
+    }
 }
