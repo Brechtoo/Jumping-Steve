@@ -46,6 +46,9 @@ public class Player2 : MonoBehaviour
     public Transform animationPos;
     public  ParticleSystem particleDash;
     public  ParticleSystem particleSystemDoubleJump;
+    public ParticleSystem grassParticle;
+    public bool grass = false;
+    public float counter = 1;
 
 
 
@@ -98,8 +101,23 @@ public class Player2 : MonoBehaviour
         }
         HandleCamera();
         HandleDash();
-        characterController.Move(_moveSpeed * Time.deltaTime * moveDir);
 
+        if (grass && counter > 0)
+        {
+            grassParticle.gameObject.SetActive(true);
+            grassParticle.Play();
+            counter = 0;
+        }
+        else if(!grass)
+        {
+            grassParticle.Stop();
+            //grassParticle.gameObject.SetActive(false);
+            counter = 1;
+        }
+
+        
+
+        characterController.Move(_moveSpeed * Time.deltaTime * moveDir);
         Paused();
     }
 
@@ -108,13 +126,22 @@ public class Player2 : MonoBehaviour
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
 
-        if(horizontalInput != 0  || verticalInput != 0 && !animator.GetBool("isJumping"))
+        if((horizontalInput != 0  || verticalInput != 0) && !animator.GetBool("isJumping"))
         {
             animator.SetBool("isRunning", true);
         }
         else
         {
             animator.SetBool("isRunning", false);
+        }
+
+        if ((horizontalInput != 0 || verticalInput != 0) && characterController.isGrounded)
+        {
+            grass = true;
+        }
+        else
+        {
+            grass = false;
         }
 
         direction = new Vector3(horizontalInput, 0, verticalInput);
@@ -177,6 +204,9 @@ public class Player2 : MonoBehaviour
 
     public void FixedUpdate()
     {
+       
+            
+      
         AnimationFix();
     }
 
@@ -204,14 +234,8 @@ public class Player2 : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
         {
 
-            if (animator.GetBool("isDoubleJumping"))
-            {
-                ParticleDash(particleSystemDoubleJump);
-            }
-            else
-            {
-                ParticleDash(particleDash);
-            }
+
+            
             StartCoroutine(PerformDash(moveDir));
 
            
@@ -248,6 +272,15 @@ public class Player2 : MonoBehaviour
         }
         if(dir.x !=0 && dir.z != 0)
         {
+            if (animator.GetBool("isDoubleJumping"))
+            {
+                ParticleDash(particleSystemDoubleJump);
+            }
+            else
+            {
+                ParticleDash(particleDash);
+                
+            }
             dashSound.Play();
         }
 
