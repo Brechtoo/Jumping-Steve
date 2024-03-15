@@ -249,6 +249,7 @@ public class Player2 : MonoBehaviour
         //Dash Bedingung
         if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
         {
+            ParticleDash(particleSystemDoubleJump);
             StartCoroutine(PerformDash(moveDir));
 
            
@@ -296,6 +297,7 @@ public class Player2 : MonoBehaviour
         }
         if(dir.x !=0 && dir.z != 0)
         {
+            /*ParticleDash(particleSystemDoubleJump);
             if (animator.GetBool("isDoubleJumping"))
             {
                 ParticleDash(particleSystemDoubleJump);
@@ -305,6 +307,7 @@ public class Player2 : MonoBehaviour
                 ParticleDash(particleDash);
                 
             }
+            */
             dashSound.Play();
         }
 
@@ -419,7 +422,7 @@ public class Player2 : MonoBehaviour
 
     public void Paused()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !gameOverScreen.active)
             pauseScreen.PauseGame();
     }
     

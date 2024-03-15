@@ -15,10 +15,20 @@ public class LevelCompleted : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
+    public void RestartButton()
+    {
+        Time.timeScale = 1f;
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+
+        SceneManager.LoadScene(sceneName);
+        gameObject.SetActive(false);
+    }
 
 
     public void NextLevelButton()
     {
+        Time.timeScale = 1f;
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex + 1;
 
@@ -27,7 +37,6 @@ public class LevelCompleted : MonoBehaviour
             SceneManager.LoadScene(nextSceneIndex);
         }
         
-        Time.timeScale = 1f;
     }
 
     public void GoToMainMenu()
@@ -40,6 +49,7 @@ public class LevelCompleted : MonoBehaviour
 
     public void Credits()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadSceneAsync(1);
     }
 }
