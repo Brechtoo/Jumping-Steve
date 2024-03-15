@@ -44,7 +44,6 @@ public class Player2 : MonoBehaviour
     private CharacterController characterController;
     public Animator animator;
     public Transform animationPos;
-    public  ParticleSystem particleDash;
     public  ParticleSystem particleSystemDoubleJump;
     public ParticleSystem grassParticle;
     public bool grass = false;
@@ -157,7 +156,7 @@ public class Player2 : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Überprüft, ob das kollidierende Objekt den richtigen Tag hat
+        
         if (collision.gameObject.CompareTag("GameOverTag"))
         {
             GameOverScreen();
@@ -205,19 +204,19 @@ public class Player2 : MonoBehaviour
                 trampolinSound.Play();
             }
         }
-        if (trigger.CompareTag("Tor")) // Überprüfen, ob das kollidierende Objekt der Gegner ist
+        if (trigger.CompareTag("Tor")) 
         {
-            rollingBall.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
-            rollingBall2.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
-            rollingBall3.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
+            rollingBall.isRolling = true;   
+            rollingBall2.isRolling = true; 
+            rollingBall3.isRolling = true; 
         }
-        if (trigger.CompareTag("Tor 2")) // Überprüfen, ob das kollidierende Objekt der Gegner ist
+        if (trigger.CompareTag("Tor 2")) 
         {
-            rollingBall4.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
+            rollingBall4.isRolling = true;
         }
-        if (trigger.CompareTag("Tor 3")) // Überprüfen, ob das kollidierende Objekt der Gegner ist
+        if (trigger.CompareTag("Tor 3")) 
         {
-            rollingBall5.isRolling = true; // Starten des Rollens, wenn der Gegner den Trigger berührt
+            rollingBall5.isRolling = true; 
         }
     }
 
@@ -297,40 +296,29 @@ public class Player2 : MonoBehaviour
         }
         if(dir.x !=0 && dir.z != 0)
         {
-            /*ParticleDash(particleSystemDoubleJump);
-            if (animator.GetBool("isDoubleJumping"))
-            {
-                ParticleDash(particleSystemDoubleJump);
-            }
-            else
-            {
-                ParticleDash(particleDash);
-                
-            }
-            */
             dashSound.Play();
         }
 
-        dir.y = 0f; //Dash geht nicht in die Höhe
+        dir.y = 0f; 
 
-        isDashing = true; // Setzen des Zustands auf "Im Dash"
+        isDashing = true; 
 
-        float startTime = Time.time; // Zeitpunkt, zu dem der Dash begann
+        float startTime = Time.time; 
 
         animator.SetBool("isDashing", true);
 
-        while (Time.time - startTime < dashDuration) // Dash-Dauer überprüfen
+        while (Time.time - startTime < dashDuration)
         {
-            // Berechnen des Fortschritts des Dashs (0 bis 1)
+            
             float progress = (Time.time - startTime) / dashDuration;
 
-            // Beschleunigen des Dashs zu Beginn
+            
             float currentSpeed = Mathf.Lerp(0, dashDistance / dashDuration, progress * acceleration);
 
-            // Verlangsamen des Dashs zum Ende hin
+            
             if (progress > 0.2f)
             {
-                // Exponentielle Verzögerung
+                
                 float deceleration = Mathf.Pow(1 - (progress - 0.2f) * 2, 2);
                 currentSpeed *= deceleration;
                 
@@ -339,7 +327,7 @@ public class Player2 : MonoBehaviour
             
             characterController.Move(currentSpeed * Time.deltaTime * dir);
 
-            yield return null; // Warten auf den nächsten Frame
+            yield return null; 
         }
 
         isDashing = false; 
@@ -348,10 +336,7 @@ public class Player2 : MonoBehaviour
 
 
         ParticleDashStop(particleSystemDoubleJump);
-        ParticleDashStop(particleDash);
-        
-
-
+     
     }
 
     public void Dying()

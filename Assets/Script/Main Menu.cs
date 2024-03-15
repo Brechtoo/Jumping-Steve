@@ -5,9 +5,20 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+
+    public MainMenu mainMenu;
+    public MainMenu Level;
     public void PlayGame()
     {
-        SceneManager.LoadSceneAsync(2);
+        mainMenu.gameObject.SetActive(false);
+        Level.gameObject.SetActive(true);
+        
+    }
+
+    public void Back()
+    {
+        Level.gameObject.SetActive(false);
+        mainMenu.gameObject.SetActive(true);
     }
 
     public void Credits()
@@ -19,4 +30,21 @@ public class MainMenu : MonoBehaviour
     {
         Application.Quit();
     }
+
+    public void Tutorial()
+    {
+        SceneManager.LoadSceneAsync(2);
+    }
+    public void Level1()
+    {
+        SceneManager.LoadSceneAsync(3);
+    }
+
+    public void Level2()
+    {
+        SceneManager.LoadSceneAsync(4);
+    }
 }
+
+
+
